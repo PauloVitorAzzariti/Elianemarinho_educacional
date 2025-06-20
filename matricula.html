@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Matrícula - Eliane Marinho Educacional</title>
+<style>
+  * { margin:0; padding:0; box-sizing: border-box; }
+  body { font-family: Arial, sans-serif; background:#fff; color:#000d1e; }
+  header {
+    background:#fff;
+    border-bottom:2px solid #ddd;
+    padding: 1rem 2rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap;
+  }
+  .logo { height:50px; }
+  nav a {
+    margin: 0 1rem;
+    text-decoration: none;
+    font-weight: bold;
+    color: #000d1e;
+  }
+  main {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  h1 {
+    color: #a40000;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  form {
+    background: #f9b233;
+    padding: 1rem;
+    border-radius: 8px;
+  }
+  label {
+    display: block;
+    margin: 0.5rem 0 0.25rem;
+    font-weight: bold;
+  }
+  input[type="text"], input[type="email"], input[type="tel"], select {
+    width: 100%;
+    padding: 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    font-size: 1rem;
+  }
+  .filhos-container {
+    margin-top: 1rem;
+  }
+  .filho-input {
+    margin-top: 0.5rem;
+  }
+  button {
+    margin-top: 1rem;
+    background: #a40000;
+    color: #fff;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+  }
+  footer {
+    background: #fff;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem 2rem;
+  }
+  footer img { max-height: 40px; }
+  .user-info {
+    font-weight: bold;
+    color: #a40000;
+    margin-left: 1rem;
+  }
+  .logout-link {
+    margin-left: 1rem;
+    cursor: pointer;
+    color: #a40000;
+    font-weight: bold;
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <img src="img/logo.png" alt="Logo Eliane Marinho" class="logo" />
+  <nav id="navbar">
+    <a href="index.html">INÍCIO</a>
+    <a href="quem-somos.html">QUEM SOMOS</a>
+    <a href="sistema-de-ensino.html">SISTEMA DE ENSINO</a>
+    <a href="projetos.html">PROJETOS</a>
+    <a href="contato.html">CONTATO</a>
+    <a href="matricula.html" class="btn-matricula">MATRICULE-SE AQUI</a>
+  </nav>
+  <div id="userSection"></div>
+</header>
+
+<main>
+  <h1>Formulário de Matrícula</h1>
+  <form id="matriculaForm">
+    <label for="nomeMae">Nome da Mãe (obrigatório)</label>
+    <input type="text" id="nomeMae" name="nomeMae" required />
+
+    <label for="nomePai">Nome do Pai (opcional)</label>
+    <input type="text" id="nomePai" name="nomePai" />
+
+    <label for="telefone">Telefone de Contato</label>
+    <input type="tel" id="telefone" name="telefone" pattern="[0-9\s\-\+\(\)]{8,15}" required placeholder="Ex: (21) 99999-9999" />
+
+    <label for="email">E-mail</label>
+    <input type="email" id="email" name="email" required />
+
+    <label for="numFilhos">Quantidade de filhos para matrícula</label>
+    <select id="numFilhos" name="numFilhos" required>
+      <option value="" disabled selected>Selecione</option>
+      <option value="1">1 filho</option>
+      <option value="2">2 filhos</option>
+    </select>
+
+    <div id="filhosContainer" class="filhos-container"></div>
+
+    <button type="submit">Enviar Matrícula</button>
+  </form>
+</main>
+
+<footer>
+  <img src="img/logo-says.png" alt="Says" />
+  <img src="img/logo.png" alt="Eliane Marinho" />
+  <img src="img/logo-maxi.png" alt="Maxi" />
+</footer>
+
+<script>
+  const userSection = document.getElementById('userSection');
+  const navbar = document.getElementById('navbar');
+
+  function atualizarNavbar() {
+    const usuarioLogado = localStorage.getItem('usuario_logado');
+    userSection.innerHTML = '';
+
+    if (usuarioLogado) {
+      const span = document.createElement('span');
+      span.classList.add('user-info');
+      span.textContent = `Olá, ${usuarioLogado}`;
+
+      const logout = document.createElement('span');
+      logout.classList.add('logout-link');
+      logout.textContent = 'Sair';
+      logout.onclick = () => {
+        localStorage.removeItem('usuario_logado');
+        window.location.reload();
+      };
+
+      userSection.appendChild(span);
+      userSection.appendChild(logout);
+    } else {
+      if (!navbar.querySelector('#linkLogin')) {
+        const loginLink = document.createElement('a');
+        loginLink.href = 'login.html';
+        loginLink.id = 'linkLogin';
+        loginLink.textContent = 'Login';
+        navbar.appendChild(loginLink);
+      }
+      if (!navbar.querySelector('#linkCadastro')) {
+        const cadastroLink = document.createElement('a');
+        cadastroLink.href = 'login.html';
+        cadastroLink.id = 'linkCadastro';
+        cadastroLink.textContent = 'Cadastro';
+        navbar.appendChild(cadastroLink);
+      }
+    }
+  }
+
+  atualizarNavbar();
+
+  const numFilhosSelect = document.getElementById('numFilhos');
+  const filhosContainer = document.getElementById('filhosContainer');
+  const form = document.getElementById('matriculaForm');
+
+  numFilhosSelect.addEventListener('change', () => {
+    filhosContainer.innerHTML = '';
+    const qtd = numFilhosSelect.value;
+
+    if (qtd === '1' || qtd === '2') {
+      for (let i = 1; i <= parseInt(qtd); i++) {
+        const label = document.createElement('label');
+        label.textContent = `Nome do filho ${i}`;
+        label.setAttribute('for', `filho${i}`);
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.id = `filho${i}`;
+        input.name = `filho${i}`;
+        input.required = true;
+        filhosContainer.appendChild(label);
+        filhosContainer.appendChild(input);
+      }
+    }
+  });
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const nomeMae = form.nomeMae.value.trim();
+    const telefone = form.telefone.value.trim();
+    const email = form.email.value.trim();
+    const numFilhos = numFilhosSelect.value;
+    const nomesFilhos = [];
+
+    if (!nomeMae || !telefone || !email || !numFilhos) {
+      alert('Preencha todos os campos obrigatórios.');
+      return;
+    }
+
+    for (let i = 1; i <= parseInt(numFilhos); i++) {
+      const filhoInput = form[`filho${i}`];
+      if (!filhoInput || filhoInput.value.trim() === '') {
+        alert('Preencha o nome de todos os filhos.');
+        return;
+      }
+      nomesFilhos.push(filhoInput.value.trim());
+    }
+
+    // Salvar matrícula no localStorage
+    let matriculas = JSON.parse(localStorage.getItem('matriculas')) || [];
+    const matricula = {
+      nomeMae,
+      nomePai: form.nomePai.value.trim(),
+      telefone,
+      email,
+      filhos: nomesFilhos,
+      usuarioEmail: localStorage.getItem('usuario_logado'),
+      data: new Date().toISOString(),
+      mensalidadeEmDia: true
+    };
+    matriculas.push(matricula);
+    localStorage.setItem('matriculas', JSON.stringify(matriculas));
+
+    alert('Matrícula enviada com sucesso!');
+    form.reset();
+    filhosContainer.innerHTML = '';
+  });
+</script>
+
+</body>
+</html>

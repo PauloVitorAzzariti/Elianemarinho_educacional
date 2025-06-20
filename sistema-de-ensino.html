@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sistema de Ensino - Eliane Marinho Educacional</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #000d1e;
+      margin: 0; padding: 0;
+    }
+    header, footer {
+      background: #fff;
+      border-bottom: 2px solid #ddd;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    footer {
+      border-top: 1px solid #ddd;
+      justify-content: center;
+      gap: 2rem;
+    }
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+      color: #000d1e;
+    }
+    .btn-matricula {
+      background-color: #f9b233;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      color: #000;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    h1 {
+      color: #a40000;
+      margin-bottom: 1rem;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+    }
+    footer img {
+      max-height: 40px;
+    }
+    .sistema-ensino {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      align-items: center;
+    }
+    .sistema-ensino img {
+      max-width: 150px;
+      border-radius: 8px;
+    }
+    .user-info {
+      font-weight: bold;
+      color: #a40000;
+      margin-left: 1rem;
+    }
+    .logout-link {
+      margin-left: 1rem;
+      cursor: pointer;
+      color: #a40000;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="img/logo.png" alt="Logo Eliane Marinho" style="height:50px" />
+    <nav id="navbar">
+      <a href="index.html">INÍCIO</a>
+      <a href="quem-somos.html">QUEM SOMOS</a>
+      <a href="sistema-de-ensino.html">SISTEMA DE ENSINO</a>
+      <a href="projetos.html">PROJETOS</a>
+      <a href="contato.html">CONTATO</a>
+      <a href="matricula.html" class="btn-matricula">MATRICULE-SE AQUI</a>
+    </nav>
+    <div id="userSection"></div>
+  </header>
+
+  <main>
+    <h1>Sistema de Ensino</h1>
+    <div class="sistema-ensino">
+      <img src="img/logo-maxi.png" alt="Sistema Maxi" />
+      <p>
+        O Sistema Maxi possui conteúdos apoiados no afeto, com proposta didática prática e flexível para todos os segmentos de ensino.
+        É uma referência nacional em educação, promovendo ensino consistente e de qualidade, favorecendo uma formação de valores e habilidades para a vida.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <img src="img/logo-says.png" alt="Says" />
+    <img src="img/logo.png" alt="Eliane Marinho" />
+    <img src="img/logo-maxi.png" alt="Maxi" />
+  </footer>
+
+<script>
+  const userSection = document.getElementById('userSection');
+  const navbar = document.getElementById('navbar');
+
+  function atualizarNavbar() {
+    const usuarioData = localStorage.getItem('usuario_logado');
+    userSection.innerHTML = '';
+
+    if (usuarioData) {
+      const usuario = JSON.parse(usuarioData);
+
+      const span = document.createElement('span');
+      span.classList.add('user-info');
+      span.textContent = `Olá, ${usuario.email}`;
+
+      const logout = document.createElement('span');
+      logout.classList.add('logout-link');
+      logout.textContent = 'Sair';
+      logout.onclick = () => {
+        localStorage.removeItem('usuario_logado');
+        window.location.reload();
+      };
+
+      userSection.appendChild(span);
+      userSection.appendChild(logout);
+
+      const linkLogin = navbar.querySelector('#linkLogin');
+      const linkCadastro = navbar.querySelector('#linkCadastro');
+      if (linkLogin) linkLogin.remove();
+      if (linkCadastro) linkCadastro.remove();
+    } else {
+      if (!navbar.querySelector('#linkLogin')) {
+        const loginLink = document.createElement('a');
+        loginLink.href = 'login.html';
+        loginLink.id = 'linkLogin';
+        loginLink.textContent = 'Login';
+        navbar.appendChild(loginLink);
+      }
+      if (!navbar.querySelector('#linkCadastro')) {
+        const cadastroLink = document.createElement('a');
+        cadastroLink.href = 'login.html';
+        cadastroLink.id = 'linkCadastro';
+        cadastroLink.textContent = 'Cadastro';
+        navbar.appendChild(cadastroLink);
+      }
+    }
+  }
+
+  atualizarNavbar();
+</script>
+
+
+</body>
+</html>

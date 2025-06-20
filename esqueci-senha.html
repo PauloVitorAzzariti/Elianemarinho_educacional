@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Esqueci Minha Senha - Eliane Marinho</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #000d1e;
+      max-width: 400px;
+      margin: 3rem auto;
+      padding: 1rem;
+    }
+    h2 {
+      text-align: center;
+      color: #a40000;
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input {
+      width: 100%;
+      padding: 0.6rem;
+      margin-top: 0.3rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    button {
+      margin-top: 2rem;
+      background: #f9b233;
+      border: none;
+      padding: 1rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      font-size: 1.1rem;
+    }
+    .message {
+      margin-top: 1rem;
+      text-align: center;
+      font-weight: bold;
+    }
+    a {
+      display: block;
+      margin-top: 1rem;
+      text-align: center;
+      color: #a40000;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Recuperar Senha</h2>
+
+  <form id="formRecuperarSenha">
+    <label for="email">Digite seu e-mail cadastrado</label>
+    <input type="email" id="email" required placeholder="email@exemplo.com" />
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <div class="message" id="message"></div>
+
+  <a href="login.html">Voltar para Login</a>
+
+  <script>
+    const form = document.getElementById('formRecuperarSenha');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim().toLowerCase();
+
+      if (!email) {
+        messageDiv.textContent = 'Por favor, preencha o e-mail.';
+        messageDiv.style.color = 'red';
+        return;
+      }
+
+      // Busca usuário no localStorage
+      const usuarios = JSON.parse(localStorage.getItem('usuarios')) || [];
+      const usuario = usuarios.find(u => u.email.toLowerCase() === email);
+
+      if (!usuario) {
+        messageDiv.textContent = 'E-mail não encontrado.';
+        messageDiv.style.color = 'red';
+        return;
+      }
+
+      // Para simplicidade, vamos pedir a nova senha diretamente
+      messageDiv.style.color = 'green';
+      messageDiv.innerHTML = `
+        E-mail encontrado! Por favor, digite sua nova senha:<br><br>
+        <input type="password" id="novaSenha" placeholder="Nova senha" style="width:100%;padding:0.6rem;border-radius:6px;border:1px solid #ccc;margin-top:0.5rem;" />
+        <input type="password" id="confirmaSenha" placeholder="Confirme a nova senha" style="width:100%;padding:0.6rem;border-radius:6px;border:1px solid #ccc;margin-top:0.5rem;" />
+        <button id="btnAlterarSenha" style="margin-top:1rem;background:#a40000;color:#fff;padding:0.7rem;border:none;border-radius:6px;cursor:pointer;width:100%;font-weight:bold;">Alterar Senha</button>
+      `;
+
+      document.getElementById('btnAlterarSenha').addEventListener('click', () => {
+        const novaSenha = document.getElementById('novaSenha').value;
+        const confirmaSenha = document.getElementById('confirmaSenha').value;
+
+        if (!novaSenha || !confirmaSenha) {
+          alert('Preencha ambos os campos de senha.');
+          return;
+        }
+
+        if (novaSenha !== confirmaSenha) {
+          alert('As senhas não conferem.');
+          return;
+        }
+
+        // Atualiza senha do usuário
+        usuario.senha = novaSenha;
+
+        // Atualiza localStorage
+        const index = usuarios.findIndex(u => u.email.toLowerCase() === email);
+        usuarios[index] = usuario;
+        localStorage.setItem('usuarios', JSON.stringify(usuarios));
+
+        alert('Senha alterada com sucesso! Faça login com a nova senha.');
+
+        // Redireciona para login
+        window.location.href = 'login.html';
+      });
+    });
+  </script>
+
+</body>
+</html>

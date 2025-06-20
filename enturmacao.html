@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enturmação - Eliane Marinho</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #000d1e;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h1 {
+      color: #a40000;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    nav {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    nav a {
+      margin: 0 1rem;
+      font-weight: bold;
+      color: #a40000;
+      text-decoration: none;
+    }
+    form {
+      margin-bottom: 2rem;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    select, input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #f9b233;
+      border: none;
+      padding: 0.5rem 1.5rem;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #000;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    th {
+      background-color: #f9b233;
+    }
+    .btn {
+      background-color: #a40000;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      margin: 0 2px;
+    }
+    .btn:hover {
+      background-color: #7c0000;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Enturmação</h1>
+
+  <nav>
+    <a href="admin.html">Voltar ao Painel Admin</a> | 
+    <a href="#" id="logout">Sair</a>
+  </nav>
+
+  <form id="formEnturmacao">
+    <select id="selectAluno" required>
+      <option value="" disabled selected>Selecione um aluno</option>
+    </select>
+
+    <select id="selectTurma" required>
+      <option value="" disabled selected>Selecione a turma</option>
+      <option value="A">Turma A</option>
+      <option value="B">Turma B</option>
+    </select>
+
+    <input type="time" id="selectHorario" required>
+
+    <button type="submit">Adicionar à Turma</button>
+  </form>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Aluno</th>
+        <th>Turma</th>
+        <th>Horário</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="listaEnturmacao"></tbody>
+  </table>
+
+  <script>
+    // Checa se admin está logado
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado'));
+    if (!usuarioLogado || !usuarioLogado.admin) {
+      alert('Acesso negado. Faça login como administrador.');
+      window.location.href = 'login.html';
+    }
+
+    const selectAluno = document.getElementById('selectAluno');
+    const selectTurma = document.getElementById('selectTurma');
+    const selectHorario = document.getElementById('selectHorario');
+    const formEnturmacao = document.getElementById('formEnturmacao');
+    const listaEnturmacao = document.getElementById('listaEnturmacao');
+
+    // Pega alunos cadastrados
+    const matriculas = JSON.parse(localStorage.getItem('matriculas')) || [];
+    // Os alunos aqui vamos considerar nome dos filhos (string), para simplicidade.
+
+    // Enturmação armazenada
+    let enturmacao = JSON.parse(localStorage.getItem('enturmacao')) || [];
+
+    // Função para contar alunos por turma
+    function contarAlunosNaTurma(turma) {
+      return enturmacao.filter(e => e.turma === turma).length;
+    }
+
+    // Popula select de alunos (não listamos alunos já enturmados para evitar duplicidade)
+    function populaAlunosDisponiveis() {
+      // Pega nomes de alunos já enturmados
+      const alunosEnturmados = enturmacao.map(e => e.nomeAluno);
+      // Pega todos alunos dos matriculados e extrai nomes separados por vírgula
+      let todosAlunos = [];
+      matriculas.forEach(m => {
+        m.nomeFilhos.split(',').forEach(filho => {
+          const nomeLimpo = filho.trim();
+          if(nomeLimpo) todosAlunos.push(nomeLimpo);
+        });
+      });
+
+      // Filtra alunos ainda não enturmados
+      const disponiveis = todosAlunos.filter(a => !alunosEnturmados.includes(a));
+
+      // Limpa select
+      selectAluno.innerHTML = '<option value="" disabled selected>Selecione um aluno</option>';
+
+      disponiveis.forEach(nome => {
+        const option = document.createElement('option');
+        option.value = nome;
+        option.textContent = nome;
+        selectAluno.appendChild(option);
+      });
+    }
+
+    // Carregar tabela
+    function carregarTabela() {
+      listaEnturmacao.innerHTML = '';
+      enturmacao.forEach((item, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.nomeAluno}</td>
+          <td>${item.turma}</td>
+          <td>${item.horario}</td>
+          <td>
+            <button class="btn" onclick="removerAluno(${i})">Remover</button>
+            <button class="btn" onclick="transferirAluno(${i})">Transferir</button>
+          </td>
+        `;
+        listaEnturmacao.appendChild(tr);
+      });
+    }
+
+    // Remover aluno da enturmação
+    function removerAluno(index) {
+      if (confirm('Deseja remover este aluno da turma?')) {
+        enturmacao.splice(index, 1);
+        localStorage.setItem('enturmacao', JSON.stringify(enturmacao));
+        populaAlunosDisponiveis();
+        carregarTabela();
+      }
+    }
+
+    // Transferir aluno entre turmas
+    function transferirAluno(index) {
+      const aluno = enturmacao[index];
+      const novaTurma = aluno.turma === 'A' ? 'B' : 'A';
+
+      if (contarAlunosNaTurma(novaTurma) >= 10) {
+        alert(`Não é possível transferir. A turma ${novaTurma} já está com 10 alunos.`);
+        return;
+      }
+
+      if (confirm(`Deseja transferir o aluno ${aluno.nomeAluno} para a turma ${novaTurma}?`)) {
+        enturmacao[index].turma = novaTurma;
+        localStorage.setItem('enturmacao', JSON.stringify(enturmacao));
+        carregarTabela();
+      }
+    }
+
+    // Ao submeter o formulário, adicionar aluno
+    formEnturmacao.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const nomeAluno = selectAluno.value;
+      const turma = selectTurma.value;
+      const horario = selectHorario.value;
+
+      if (!nomeAluno || !turma || !horario) {
+        alert('Preencha todos os campos.');
+        return;
+      }
+
+      if (contarAlunosNaTurma(turma) >= 10) {
+        alert(`A turma ${turma} já está completa (10 alunos).`);
+        return;
+      }
+
+      enturmacao.push({ nomeAluno, turma, horario });
+      localStorage.setItem('enturmacao', JSON.stringify(enturmacao));
+
+      populaAlunosDisponiveis();
+      carregarTabela();
+
+      // Reset form
+      formEnturmacao.reset();
+    });
+
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('usuario_logado');
+      window.location.href = 'login.html';
+    });
+
+    populaAlunosDisponiveis();
+    carregarTabela();
+
+  </script>
+
+</body>
+</html>

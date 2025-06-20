@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Eliane Marinho</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: Arial, sans-serif; background: #fff; color: #000d1e; }
+    header {
+      background: #fff;
+      border-bottom: 2px solid #ddd;
+      padding: 1rem 2rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .logo { height: 50px; }
+    nav a {
+      margin-left: 1rem;
+      text-decoration: none;
+      font-weight: bold;
+      color: #000d1e;
+    }
+    main {
+      max-width: 700px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h1 {
+      color: #a40000;
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+    .resumo {
+      background: #f7f7f7;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+    .resumo h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .resumo p {
+      margin-bottom: 0.5rem;
+      font-size: 1.1rem;
+    }
+    .valor {
+      font-size: 1.3rem;
+      font-weight: bold;
+      color: #a40000;
+      margin-top: 1rem;
+    }
+    button {
+      background: #f9b233;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      padding: 0.75rem 1.5rem;
+      font-size: 1.1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: block;
+      margin: 1rem auto 0 auto;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="img/logo.png" alt="Logo Eliane Marinho" class="logo" />
+  <nav>
+    <a href="index.html">INÍCIO</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Resumo da Matrícula</h1>
+  <div class="resumo" id="resumoMatricula">
+    <!-- Resumo será preenchido via JS -->
+  </div>
+  <button id="finalizarBtn">Finalizar Matrícula</button>
+</main>
+
+<script>
+  // Verifica se usuário está logado e não é admin
+  const usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado'));
+  if (!usuarioLogado || usuarioLogado.admin) {
+    alert('Acesso não autorizado.');
+    window.location.href = 'index.html';
+  }
+
+  const resumoDiv = document.getElementById('resumoMatricula');
+  const finalizarBtn = document.getElementById('finalizarBtn');
+
+  // Obter matrícula mais recente do usuário logado
+  const matriculas = JSON.parse(localStorage.getItem('matriculas')) || [];
+  const ultimaMatricula = matriculas.reverse().find(m => m.usuarioEmail === usuarioLogado.email);
+  const urlParams = new URLSearchParams(window.location.search);
+  const filhosQtd = urlParams.get('filhos') || '1';
+
+  let valor = 0;
+  if (filhosQtd === '1') valor = 500;
+  else if (filhosQtd === '2') valor = 900;
+  else valor = 1200;
+
+  if (ultimaMatricula) {
+    resumoDiv.innerHTML = `
+      <h2>Responsável: ${ultimaMatricula.responsavel}</h2>
+      <p><strong>Contato:</strong> ${ultimaMatricula.contato}</p>
+      <p><strong>Filhos:</strong></p>
+      <ul>
+        ${ultimaMatricula.filhos.map(nome => `<li>${nome}</li>`).join('')}
+      </ul>
+      <p class="valor">Valor Total: R$ ${valor.toFixed(2).replace('.', ',')}</p>
+    `;
+  } else {
+    resumoDiv.innerHTML = `<p>Nenhuma matrícula encontrada.</p>`;
+    finalizarBtn.style.display = 'none';
+  }
+
+  finalizarBtn.addEventListener('click', () => {
+    alert('Matrícula finalizada com sucesso!');
+    window.location.href = 'index.html';
+  });
+</script>
+
+</body>
+</html>

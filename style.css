@@ -1,0 +1,189 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Montserrat', sans-serif;
+  background-color: #ffffff;
+  color: #000d1e;
+}
+
+.container {
+  max-width: 1200px;
+  margin: auto;
+  padding: 1rem;
+}
+
+.header {
+  background-color: #ffffff;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #eee;
+}
+
+.logo {
+  height: 50px;
+}
+
+.nav a {
+  margin: 0 1rem;
+  text-decoration: none;
+  color: #000d1e;
+  font-weight: 600;
+}
+
+.btn-destaque {
+  background-color: #f9b233;
+  color: #000;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.hero {
+  background-color: #a40000;
+  color: white;
+  padding: 4rem 2rem;
+}
+
+.hero-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hero-image img {
+  width: 250px;
+  border-radius: 10px;
+}
+
+.hero-texto h1 {
+  font-size: 3rem;
+  font-weight: 800;
+}
+
+.hero-texto span {
+  color: #f9b233;
+}
+
+.hero-texto p {
+  font-size: 1.2rem;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+.institucional {
+  padding: 4rem 2rem;
+  background-color: #ffffff;
+}
+
+.institucional-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+}
+
+.galeria {
+  flex: 1 1 50%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.galeria img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.texto-institucional {
+  flex: 1 1 40%;
+}
+
+.texto-institucional h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.texto-institucional p {
+  font-size: 1.1rem;
+}
+
+.sistema-ensino {
+  padding: 4rem 2rem;
+  background-color: #f9f9f9;
+}
+
+.sistema-ensino-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem;
+}
+
+.sistema-logo {
+  flex: 1 1 30%;
+  text-align: center;
+}
+
+.sistema-logo img {
+  max-width: 150px;
+}
+
+.sistema-texto {
+  flex: 1 1 65%;
+}
+
+.sistema-texto h2 {
+  font-size: 2rem;
+  color: #000d1e;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.sistema-texto p {
+  font-size: 1.1rem;
+}
+
+.programa-bilingue {
+  padding: 4rem 2rem;
+  background-color: #ffffff;
+}
+
+.bilingual-content {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2rem;
+}
+
+.bilingual-logo {
+  flex: 1 1 30%;
+  text-align: center;
+}
+
+.bilingual-logo img {
+  max-width: 150px;
+}
+
+.bilingual-texto {
+  flex: 1 1 65%;
+}
+
+.bilingual-texto h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 800;
+}
+
+.bilingual-texto p {
+  font-size: 1.1rem;
+} 

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Contato - Eliane Marinho Educacional</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #000d1e;
+      margin: 0; padding: 0;
+    }
+    header, footer {
+      background: #fff;
+      border-bottom: 2px solid #ddd;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+    footer {
+      border-top: 1px solid #ddd;
+      justify-content: center;
+      gap: 2rem;
+    }
+    nav a {
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+      color: #000d1e;
+    }
+    .btn-matricula {
+      background-color: #f9b233;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      color: #000;
+    }
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    h1 {
+      color: #a40000;
+      margin-bottom: 1rem;
+    }
+    form label {
+      display: block;
+      margin: 1rem 0 0.3rem;
+      font-weight: bold;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    form textarea {
+      resize: vertical;
+      height: 120px;
+    }
+    form button {
+      margin-top: 1rem;
+      background: #a40000;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    footer img {
+      max-height: 40px;
+    }
+    .user-info {
+      font-weight: bold;
+      color: #a40000;
+      margin-left: 1rem;
+    }
+    .logout-link {
+      margin-left: 1rem;
+      cursor: pointer;
+      color: #a40000;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="img/logo.png" alt="Logo Eliane Marinho" style="height:50px" />
+    <nav id="navbar">
+      <a href="index.html">INÍCIO</a>
+      <a href="quem-somos.html">QUEM SOMOS</a>
+      <a href="sistema-de-ensino.html">SISTEMA DE ENSINO</a>
+      <a href="projetos.html">PROJETOS</a>
+      <a href="contato.html">CONTATO</a>
+      <a href="matricula.html" class="btn-matricula">MATRICULE-SE AQUI</a>
+    </nav>
+    <div id="userSection"></div>
+  </header>
+
+  <main>
+    <h1>Contato</h1>
+    <form id="contatoForm">
+      <label for="nome">Nome</label>
+      <input type="text" id="nome" name="nome" required />
+
+      <label for="email">E-mail</label>
+      <input type="email" id="email" name="email" required />
+
+      <label for="mensagem">Mensagem</label>
+      <textarea id="mensagem" name="mensagem" required></textarea>
+
+      <button type="submit">Enviar</button>
+    </form>
+  </main>
+
+  <footer>
+    <img src="img/logo-says.png" alt="Says" />
+    <img src="img/logo.png" alt="Eliane Marinho" />
+    <img src="img/logo-maxi.png" alt="Maxi" />
+  </footer>
+
+<script>
+  // Exibir usuário logado ou links login/cadastro
+  const userSection = document.getElementById('userSection');
+  const navbar = document.getElementById('navbar');
+
+  function atualizarNavbar() {
+    const usuarioLogadoJSON = localStorage.getItem('usuario_logado');
+    userSection.innerHTML = '';
+
+    if (usuarioLogadoJSON) {
+      const usuarioLogado = JSON.parse(usuarioLogadoJSON);
+      const emailUsuario = usuarioLogado.email || usuarioLogado; // suporte antigo e novo
+
+      const span = document.createElement('span');
+      span.classList.add('user-info');
+      span.textContent = `Olá, ${emailUsuario}`;
+
+      const logout = document.createElement('span');
+      logout.classList.add('logout-link');
+      logout.textContent = 'Sair';
+      logout.onclick = () => {
+        localStorage.removeItem('usuario_logado');
+        window.location.reload();
+      };
+
+      userSection.appendChild(span);
+      userSection.appendChild(logout);
+
+      const linkLogin = navbar.querySelector('#linkLogin');
+      const linkCadastro = navbar.querySelector('#linkCadastro');
+      if(linkLogin) linkLogin.remove();
+      if(linkCadastro) linkCadastro.remove();
+
+    } else {
+      if (!navbar.querySelector('#linkLogin')) {
+        const loginLink = document.createElement('a');
+        loginLink.href = 'login.html';
+        loginLink.id = 'linkLogin';
+        loginLink.textContent = 'Login';
+        navbar.appendChild(loginLink);
+      }
+      if (!navbar.querySelector('#linkCadastro')) {
+        const cadastroLink = document.createElement('a');
+        cadastroLink.href = 'login.html';
+        cadastroLink.id = 'linkCadastro';
+        cadastroLink.textContent = 'Cadastro';
+        navbar.appendChild(cadastroLink);
+      }
+    }
+  }
+
+  atualizarNavbar();
+
+  // Envio do formulário via WhatsApp
+  const formContato = document.getElementById('contatoForm');
+  formContato.addEventListener('submit', e => {
+    e.preventDefault();
+
+    const nome = document.getElementById('nome').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const mensagem = document.getElementById('mensagem').value.trim();
+
+    if (!nome || !email || !mensagem) {
+      alert('Preencha todos os campos antes de enviar.');
+      return;
+    }
+
+    // Número do WhatsApp do colégio (com DDI e DDD, só números)
+    const numeroWhatsApp = '5522999999999'; // Coloque o número correto aqui
+
+    const texto = `Olá! Meu nome é ${nome}.\n\nMeu e-mail é: ${email}\n\nTenho a seguinte dúvida:\n${mensagem}`;
+
+    const linkWhatsApp = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(texto)}`;
+
+    window.open(linkWhatsApp, '_blank');
+  });
+</script>
+
+</body>
+</html>

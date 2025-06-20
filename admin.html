@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Painel Admin - Eliane Marinho</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fff;
+      color: #000d1e;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+    }
+    h1 {
+      color: #a40000;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 0.5rem;
+      text-align: center;
+    }
+    th {
+      background-color: #f9b233;
+      color: #000d1e;
+    }
+    .btn {
+      background-color: #a40000;
+      color: white;
+      border: none;
+      padding: 0.3rem 0.6rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .btn:hover {
+      background-color: #7c0000;
+    }
+    .mensalidade-atrasada {
+      color: red;
+      font-weight: bold;
+    }
+    nav {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+    nav a {
+      margin: 0 1rem;
+      font-weight: bold;
+      color: #a40000;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Painel Administrativo</h1>
+
+  <nav>
+    <a href="enturmacao.html">Enturmação</a> | 
+    <a href="#" id="logout">Sair</a>
+  </nav>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Responsável</th>
+        <th>Contato</th>
+        <th>Filho(s)</th>
+        <th>Qtd. Filhos</th>
+        <th>E-mail</th>
+        <th>Data da Matrícula</th>
+        <th>Mensalidade</th>
+        <th>Ações</th>
+      </tr>
+    </thead>
+    <tbody id="listaMatriculas"></tbody>
+  </table>
+
+  <script>
+    function carregarMatriculas() {
+      const lista = document.getElementById('listaMatriculas');
+      const matriculas = JSON.parse(localStorage.getItem('matriculas')) || [];
+      lista.innerHTML = '';
+
+      matriculas.forEach((mat, i) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${mat.nomeResponsavel}</td>
+          <td>${mat.contato}</td>
+          <td>${mat.nomeFilhos}</td>
+          <td>${mat.quantidadeFilhos}</td>
+          <td>${mat.email}</td>
+          <td>${mat.data}</td>
+          <td class="${mat.mensalidadeEmDia ? '' : 'mensalidade-atrasada'}">
+            ${mat.mensalidadeEmDia ? 'Em dia' : 'Atrasada'}
+          </td>
+          <td>
+            <button class="btn" onclick="deletarMatricula(${i})">Deletar</button>
+            <button class="btn" onclick="toggleMensalidade(${i})">Alterar Mensalidade</button>
+          </td>
+        `;
+        lista.appendChild(tr);
+      });
+    }
+
+    function deletarMatricula(index) {
+      if (confirm('Tem certeza que deseja deletar essa matrícula?')) {
+        let matriculas = JSON.parse(localStorage.getItem('matriculas')) || [];
+        matriculas.splice(index, 1);
+        localStorage.setItem('matriculas', JSON.stringify(matriculas));
+        carregarMatriculas();
+      }
+    }
+
+    function toggleMensalidade(index) {
+      let matriculas = JSON.parse(localStorage.getItem('matriculas')) || [];
+      matriculas[index].mensalidadeEmDia = !matriculas[index].mensalidadeEmDia;
+      localStorage.setItem('matriculas', JSON.stringify(matriculas));
+      carregarMatriculas();
+    }
+
+    document.getElementById('logout').addEventListener('click', () => {
+      localStorage.removeItem('usuario_logado');
+      window.location.href = 'login.html';
+    });
+
+    // Verifica se admin está logado
+    const usuarioLogado = JSON.parse(localStorage.getItem('usuario_logado'));
+    if (!usuarioLogado || !usuarioLogado.admin) {
+      alert('Acesso negado. Faça login como administrador.');
+      window.location.href = 'login.html';
+    } else {
+      carregarMatriculas();
+    }
+  </script>
+
+</body>
+</html>
