@@ -142,13 +142,17 @@
   const navbar = document.getElementById('navbar');
 
   function atualizarNavbar() {
-    const usuarioLogado = localStorage.getItem('usuario_logado');
+    // Obtem o usuário logado, que é um objeto JSON salvo no localStorage
+    const usuarioLogadoStr = localStorage.getItem('usuario_logado');
     userSection.innerHTML = '';
 
-    if (usuarioLogado) {
+    if (usuarioLogadoStr) {
+      const usuarioLogado = JSON.parse(usuarioLogadoStr);
+
+      // Exibe o e-mail no userSection
       const span = document.createElement('span');
       span.classList.add('user-info');
-      span.textContent = `Olá, ${usuarioLogado}`;
+      span.textContent = `Olá, ${usuarioLogado.email}`;
 
       const logout = document.createElement('span');
       logout.classList.add('logout-link');
@@ -160,7 +164,15 @@
 
       userSection.appendChild(span);
       userSection.appendChild(logout);
+
+      // Remove links de login e cadastro da navbar caso existam
+      const loginLink = document.getElementById('linkLogin');
+      const cadastroLink = document.getElementById('linkCadastro');
+      if(loginLink) loginLink.remove();
+      if(cadastroLink) cadastroLink.remove();
+
     } else {
+      // Se não estiver logado, adiciona os links, mas só se não existirem ainda
       if (!navbar.querySelector('#linkLogin')) {
         const loginLink = document.createElement('a');
         loginLink.href = 'login.html';
@@ -236,7 +248,7 @@
       telefone,
       email,
       filhos: nomesFilhos,
-      usuarioEmail: localStorage.getItem('usuario_logado'),
+      usuarioEmail: JSON.parse(localStorage.getItem('usuario_logado'))?.email || email,
       data: new Date().toISOString(),
       mensalidadeEmDia: true
     };
